@@ -1,8 +1,8 @@
 <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/1342803/24797159/52fb0d88-1b90-11e7-85a5-359fff0496a4.png" width="320" alt="MySQL">
+    <img src="https://cloud.githubusercontent.com/assets/1342803/24797159/52fb0d88-1b90-11e7-85a5-359fff0496a4.png" width="320" alt="Auth Template">
     <br>
     <br>
-    <a href="http://beta.docs.vapor.codes/getting-started/hello-world/">
+    <a href="http://127.0.0.1:8000/auth/getting-started/">
         <img src="http://img.shields.io/badge/read_the-docs-92A8D1.svg" alt="Documentation">
     </a>
     <a href="http://vapor.team">
