@@ -92,24 +92,6 @@ extension User: JSONConvertible {
 // directly in route closures
 extension User: ResponseRepresentable { }
 
-// MARK: Update
-
-// This allows the User model to be updated
-// dynamically by the request.
-extension User: Updateable {
-    // Updateable keys are called when `user.update(for: req)` is called.
-    // Add as many updateable keys as you like here.
-    public static var updateableKeys: [UpdateableKey<User>] {
-        return [
-            // If the request contains a String at key "name"
-            // the setter callback will be called.
-            UpdateableKey("name", String.self) { user, name in
-                user.name = name
-            }
-        ]
-    }
-}
-
 // MARK: Password
 
 // This allows the User to be authenticated
@@ -143,6 +125,8 @@ extension Request {
 
 // MARK: Token
 
+// This allows the User to be authenticated
+// with an access token.
 extension User: TokenAuthenticatable {
     typealias TokenType = Token
 }
