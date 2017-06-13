@@ -1,5 +1,6 @@
 import FluentProvider
 import AuthProvider
+import JWTProvider
 
 extension Config {
     public func setup() throws {
@@ -15,6 +16,7 @@ extension Config {
     private func setupProviders() throws {
         try addProvider(FluentProvider.Provider.self)
         try addProvider(AuthProvider.Provider.self)
+        try addProvider(JWTProvider.Provider.self)
     }
     
     /// Add all models that should have their

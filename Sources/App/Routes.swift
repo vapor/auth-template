@@ -1,11 +1,13 @@
 import Vapor
 import AuthProvider
+import JWTProvider
 
 extension Droplet {
     func setupRoutes() throws {
         try setupUnauthenticatedRoutes()
         try setupPasswordProtectedRoutes()
         try setupTokenProtectedRoutes()
+        try setupJWTProtectedRoutes()
     }
 
     /// Sets up all routes that can be accessed
@@ -87,7 +89,16 @@ extension Droplet {
             let user = try req.user()
             let token = try Token.generate(for: user)
             try token.save()
-            return token
+            
+            guard let userId = user.id?.int else {
+                return try Response(status: .badRequest, json: JSON(node: ["error": "Could not find your account. Please try authenticating again."]))
+            }
+            
+            return try JSON(node: [
+                "token": token.token,
+                "jwt_token": try self.createJwtToken(String(describing: userId)),
+                "user": user
+                ])
         }
     }
 
@@ -108,6 +119,31 @@ extension Droplet {
         // GET /me
         // Authorization: Bearer <token from /login>
         token.get("me") { req in
+            let user = try req.user()
+            return "Hello, \(user.name)"
+        }
+    }
+    
+    /// Sets up all routes that can be accessed using JWT authentication.
+    /// Since we want to minimize how often the username + password
+    /// is sent, we will only use this form of authentication to
+    /// log the user in.
+    /// After the user is logged in, they will receive a token that
+    /// they can use for further authentication.
+    private func setupJWTProtectedRoutes() throws {
+        // creates a route group protected by the jwt payload middleware.
+        // the User type can be passed to this middleware since it
+        // conforms to PayloadAuthenticatable
+        let jwt = grouped([
+            PayloadAuthenticationMiddleware(self.signer!, [], User.self)
+            ])
+        
+        // simply returns a greeting to the user that has been authed
+        // using the token middleware.
+        //
+        // GET /me-jwt
+        // Authorization: Bearer <jwt_token from /login>
+        jwt.post("me-jwt") { req in
             let user = try req.user()
             return "Hello, \(user.name)"
         }

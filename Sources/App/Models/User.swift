@@ -2,6 +2,8 @@ import Vapor
 import FluentProvider
 import AuthProvider
 import HTTP
+import JWT
+import JWTProvider
 
 final class User: Model {
     let storage = Storage()
@@ -32,7 +34,7 @@ final class User: Model {
         password = try row.get("password")
     }
 
-    // Serializes the Post to the database
+    // Serializes the User to the database
     func makeRow() throws -> Row {
         var row = Row()
         try row.set("name", name)
@@ -129,4 +131,42 @@ extension Request {
 // with an access token.
 extension User: TokenAuthenticatable {
     typealias TokenType = Token
+}
+
+class Claims: JSONInitializable {
+    var subjectClaimValue : String
+    var expirationTimeClaimValue : Double
+    public required init(json: JSON) throws {
+        guard let subjectClaimValue = try json.get(SubjectClaim.name) as String? else {
+            throw AuthenticationError.invalidCredentials
+        }
+        self.subjectClaimValue = subjectClaimValue
+        
+        guard let expirationTimeClaimValue = try json.get(ExpirationTimeClaim.name) as String?,
+            let expirationValue = Double(expirationTimeClaimValue) else {
+            throw AuthenticationError.invalidCredentials
+        }
+        
+        self.expirationTimeClaimValue = expirationValue
+    }
+}
+
+extension User: PayloadAuthenticatable {
+    typealias PayloadType = Claims
+    
+    static func authenticate(_ payload: Claims) throws -> User {
+        if payload.expirationTimeClaimValue < Date().timeIntervalSince1970 {
+            throw AuthenticationError.invalidCredentials
+        }
+        
+        let userId = payload.subjectClaimValue
+        guard let user = try User.makeQuery()
+            .filter(idKey, userId)
+            .first()
+            else {
+                throw AuthenticationError.invalidCredentials
+        }
+        
+        return user
+    }
 }
