@@ -55,7 +55,7 @@ extension Droplet {
             }
 
             // hash the password and set it on the user
-            user.password = try self.hash.make(password.makeBytes()).makeString()
+            user.password = try BCryptHasher().make(password.makeBytes()).makeString()
 
             // save and return the new user
             try user.save()
