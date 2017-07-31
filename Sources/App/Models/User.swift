@@ -110,7 +110,7 @@ extension User: PasswordAuthenticatable {
 
 // store private variable since storage in extensions
 // is not yet allowed in Swift
-private var _userPasswordVerifier: PasswordVerifier? = nil
+private var _userPasswordVerifier: PasswordVerifier? = BCryptHasher()
 
 // MARK: Request
 
