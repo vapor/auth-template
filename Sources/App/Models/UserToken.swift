@@ -33,7 +33,6 @@ extension UserToken {
 
 extension UserToken: Token {
     typealias UserType = User
-    typealias UserIDType = User.ID
     
     static var tokenKey: WritableKeyPath<UserToken, String> {
         return \.string

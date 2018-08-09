@@ -26,6 +26,8 @@ extension User: PasswordAuthenticatable {
     }
 }
 
+extension User: SessionAuthenticatable { }
+
 extension User: TokenAuthenticatable {
     typealias TokenType = UserToken
 }
