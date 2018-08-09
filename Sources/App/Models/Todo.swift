@@ -1,7 +1,7 @@
 import FluentSQLite
 import Vapor
 
-/// A single entry of a Todo list.
+/// A single entry of a todo list.
 final class Todo: SQLiteModel {
     /// The unique identifier for this `Todo`.
     var id: Int?
@@ -21,12 +21,13 @@ final class Todo: SQLiteModel {
 }
 
 extension Todo {
+    /// Fluent relation to user that owns this todo.
     var user: Parent<Todo, User> {
         return parent(\.userID)
     }
 }
 
-/// Allows `Todo` to be used as a dynamic migration.
+/// Allows `Todo` to be used as a Fluent migration.
 extension Todo: Migration {
     static func prepare(on conn: SQLiteConnection) -> Future<Void> {
         return SQLiteDatabase.create(Todo.self, on: conn) { builder in
