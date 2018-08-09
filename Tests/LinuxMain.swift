@@ -5,7 +5,7 @@ import XCTest
 
 XCTMain([
     // AppTests
-    testCase(RouteTests.allTests)
+    testCase(AppTests.allTests)
 ])
 
 #endif
